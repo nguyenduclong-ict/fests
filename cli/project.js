@@ -18,7 +18,7 @@ module.exports.newProject = async function (args = []) {
     const CURRENT_DIR = process.cwd()
     const PROJECT_DIR = Path.join(CURRENT_DIR, projectName)
     const TMP_DIR = Path.join('/tmp', projectName)
-    let loading = ora('Prepare project ...').start()
+    let loading = ora('Prepare project...').start()
     try {
         await execPromise(
             `
@@ -28,7 +28,8 @@ module.exports.newProject = async function (args = []) {
             cp env.example.ts env.ts && 
             rm -rf .git && 
             git init && 
-            yarn init -y
+            yarn init -y &&
+            yarn update:core
             `
         )
         // modify package.json
@@ -40,7 +41,7 @@ module.exports.newProject = async function (args = []) {
         )
         loading.succeed()
         // Install dependencies
-        loading.text = 'Install dependencies'
+        loading.text = 'Install dependencies...'
         loading.start()
         await execPromise(`cd ${TMP_DIR} && yarn`)
         loading.succeed()
