@@ -1,6 +1,7 @@
 {
     "name": "fests",
     "version": "1.0.0",
+    "main": "./",
     "bin": "./cli/index.js",
     "repository": "git@github.com:nguyenduclong-ict/fests.git",
     "author": "Nguyễn Đức Long <longnd@rabiloo.com.vn>",
