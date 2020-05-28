@@ -5,9 +5,24 @@ export function getPriorityEnv() {
     for (const key in process.env) {
         if (process.env.hasOwnProperty(key) && /^_PO\./gi.test(key)) {
             const value = process.env[key]
-            set(priorityEnv, key.replace('_PO.', ''), value)
+            priorityEnv[key.replace('_PO.', '')] = value
             delete process.env[key]
         }
     }
     return priorityEnv
+}
+
+export function getNestedEnv(path) {
+    const nested = {}
+    for (const key in process.env) {
+        if (
+            process.env.hasOwnProperty(key) &&
+            RegExp('^' + path, 'gi').test(key)
+        ) {
+            const value = process.env[key]
+            set(nested, key.replace('_PO.', ''), value)
+            delete process.env[key]
+        }
+    }
+    return nested[path]
 }
