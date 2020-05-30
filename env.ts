@@ -17,7 +17,7 @@ export function getNestedEnv(path) {
     for (const key in process.env) {
         if (
             process.env.hasOwnProperty(key) &&
-            RegExp('^' + path, 'gi').test(key)
+            RegExp('^' + path + '.', 'gi').test(key)
         ) {
             const value = process.env[key]
             set(nested, key.replace('_PO.', ''), value)
