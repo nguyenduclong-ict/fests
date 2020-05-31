@@ -24,7 +24,7 @@ export default function (schema: Schema) {
 `.trim()
 
 const PROVIDER_FILE = `
-import { Provider } from '@/utils/fesjs/mongo';
+import { Provider } from '@/lib/core/mongo';
 import {name} from './model';
 
 class {name}Provider extends Provider {}
