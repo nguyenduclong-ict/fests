@@ -11,6 +11,7 @@ import {
     CreateOneFunction,
     GetManyOptions,
 } from './declare'
+import { validatePagination } from '../query'
 
 export class Provider {
     model: Model<Document, {}>
@@ -25,6 +26,8 @@ export class Provider {
         this.updateMany = updateMany(model)
         this.deleteOne = deleteOne(model)
         this.deleteMany = deleteMany(model)
+        this.find = find(this)
+        this.list = list(this)
     }
 
     getOne: GetOneFunction
@@ -35,6 +38,33 @@ export class Provider {
     updateMany: UpdateManyFunction
     deleteOne: DeleteOneFunction
     deleteMany: DeleteManyFunction
+    // query
+    list: (req, res, next) => void
+    find: (req, res, next) => void
+}
+
+export function list(ctx) {
+    return async function (req, res, next) {
+        if (typeof req.query.pagination === 'string') {
+            req.query.pagination = JSON.parse(req.query.pagination)
+        }
+        req.query.pagination = req.query.pagination || {
+            page: 0,
+            pageSize: 10,
+            disabled: false,
+        }
+        const pagination = validatePagination(req.query.pagination)
+        delete req.query.pagination
+        const result = await ctx.getMany(req.query, { pagination })
+        return res.json(result)
+    }
+}
+
+export function find(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.getMany(req.query, {})
+        return res.json(result)
+    }
 }
 
 // function ----------------------------------------------------
