@@ -65,4 +65,5 @@ export declare interface GetManyOptions {
         page?: number
         pageSize?: number
     }
+    sort?
 }

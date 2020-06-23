@@ -45,15 +45,20 @@ export class Provider {
 
 export function list(ctx) {
     return async function (req, res, next) {
-        if (typeof req.query.pagination === 'string') {
-            req.query.pagination = JSON.parse(req.query.pagination)
+        let { sort, pagination } = req.query
+        if (typeof sort === 'string') {
+            sort = JSON.parse(sort)
         }
-        req.query.pagination = req.query.pagination || {
+        if (typeof pagination === 'string') {
+            pagination = JSON.parse(pagination)
+        }
+        pagination = pagination || {
             page: 0,
             pageSize: 10,
             disabled: false,
         }
-        const pagination = validatePagination(req.query.pagination)
+        pagination = validatePagination(pagination)
+        delete req.query.sort
         delete req.query.pagination
         const result = await ctx.getMany(req.query, { pagination })
         return res.json(result)
@@ -62,7 +67,12 @@ export function list(ctx) {
 
 export function find(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.getMany(req.query, {})
+        let { sort } = req.query
+        if (typeof sort === 'string') {
+            sort = JSON.parse(req.query.pagination)
+        }
+        delete req.query.sort
+        const result = await ctx.getMany(req.query, { sort })
         return res.json(result)
     }
 }
@@ -87,7 +97,7 @@ export function getMany(model: Model<Document, {}>) {
             },
         }
         options = { ...defaultOptions, ...options }
-        const { pagination, populates } = options
+        const { pagination, populates, sort } = options
         if (!pagination.disabled) {
             // skip and limit
             const { page, pageSize } = pagination
@@ -95,11 +105,15 @@ export function getMany(model: Model<Document, {}>) {
                 .find(condition)
                 .skip(pageSize * page)
                 .limit(pageSize)
+            // Sort
+            if (sort) {
+                task.sort(sort)
+            }
             // populates
             populates.forEach((field) => {
                 task.populate(field)
             })
-            const [list, count] = await Promise.all([
+            const [l, count] = await Promise.all([
                 task.lean().exec(),
                 model.countDocuments(condition),
             ])
@@ -110,7 +124,7 @@ export function getMany(model: Model<Document, {}>) {
                 pageSize,
                 totalPage: Math.ceil(count / pageSize),
             }
-            return { data: list || [], pager }
+            return { data: l || [], pager }
         } else {
             // No pagination
             const task = model.find(condition)
@@ -118,6 +132,10 @@ export function getMany(model: Model<Document, {}>) {
             populates.forEach((field) => {
                 task.populate(field)
             })
+            // Sort
+            if (sort) {
+                task.sort(sort)
+            }
             return task.lean().exec()
         }
     }
