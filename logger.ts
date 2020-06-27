@@ -4,13 +4,13 @@ export default {
     log(...args) {
         console.log(...args)
     },
-    error(...args) {
-        console.log(chalk.bold.red('ERROR'), ...args)
+    error(prefix, ...args) {
+        console.log(chalk.bold.red(prefix || 'ERROR'), ...args)
     },
-    warning(...args) {
-        console.log(chalk.bold.yellow('WARNING'), ...args)
+    warning(prefix, ...args) {
+        console.log(chalk.bold.yellow(prefix || 'WARNING'), ...args)
     },
-    info(...args) {
-        console.log(chalk.bold.green('INFO'), ...args)
+    info(prefix, ...args) {
+        console.log(chalk.bold.green(prefix || 'INFO'), ...args)
     },
 }
