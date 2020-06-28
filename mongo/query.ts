@@ -29,6 +29,8 @@ export class Provider {
 
         this.list = list(this)
         this.find = find(this)
+        this.listBody = list(this, 'body')
+        this.findBody = find(this, 'body')
         this.rCreate = rCreate(this)
         this.rCreateMany = rCreateMany(this)
         this.rUpdate = rUpdate(this)
@@ -48,6 +50,8 @@ export class Provider {
     // router
     list: (req, res, next) => void
     find: (req, res, next) => void
+    listBody: (req, res, next) => void
+    findBody: (req, res, next) => void
     rCreate: (req, res, next) => void
     rCreateMany: (req, res, next) => void
     rUpdate: (req, res, next) => void
@@ -56,9 +60,10 @@ export class Provider {
     rDeleteMany: (req, res, next) => void
 }
 
-export function list(ctx) {
+export function list(ctx, target = 'query') {
     return async function (req, res, next) {
-        let { sort, pagination } = req.query
+        const query = req[target]
+        let { sort, pagination } = query
         if (typeof sort === 'string') {
             sort = JSON.parse(sort)
         }
@@ -71,21 +76,22 @@ export function list(ctx) {
             disabled: false,
         }
         pagination = validatePagination(pagination)
-        delete req.query.sort
-        delete req.query.pagination
-        const result = await ctx.getMany(req.query, { pagination })
+        delete query.sort
+        delete query.pagination
+        const result = await ctx.getMany(query, { pagination })
         return res.json(result)
     }
 }
 
-export function find(ctx) {
+export function find(ctx, target = 'query') {
     return async function (req, res, next) {
-        let { sort } = req.query
+        const query = req[target]
+        let { sort } = query
         if (typeof sort === 'string') {
-            sort = JSON.parse(req.query.pagination)
+            sort = JSON.parse(query.sort)
         }
-        delete req.query.sort
-        const result = await ctx.getMany(req.query, { sort })
+        delete query.sort
+        const result = await ctx.getMany(query, { sort })
         return res.json(result)
     }
 }
@@ -245,3 +251,5 @@ export function deleteMany(model: Model<Document, {}>) {
         return model.deleteMany(condition)
     }
 }
+
+// const operators =
