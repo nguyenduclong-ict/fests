@@ -26,8 +26,15 @@ export class Provider {
         this.updateMany = updateMany(model)
         this.deleteOne = deleteOne(model)
         this.deleteMany = deleteMany(model)
-        this.find = find(this)
+
         this.list = list(this)
+        this.find = find(this)
+        this.rCreate = rCreate(this)
+        this.rCreateMany = rCreateMany(this)
+        this.rUpdate = rUpdate(this)
+        this.rUpdateMany = rUpdateMany(this)
+        this.rDelete = rDelete(this)
+        this.rDeleteMany = rDeleteMany(this)
     }
 
     getOne: GetOneFunction
@@ -38,9 +45,15 @@ export class Provider {
     updateMany: UpdateManyFunction
     deleteOne: DeleteOneFunction
     deleteMany: DeleteManyFunction
-    // query
+    // router
     list: (req, res, next) => void
     find: (req, res, next) => void
+    rCreate: (req, res, next) => void
+    rCreateMany: (req, res, next) => void
+    rUpdate: (req, res, next) => void
+    rUpdateMany: (req, res, next) => void
+    rDelete: (req, res, next) => void
+    rDeleteMany: (req, res, next) => void
 }
 
 export function list(ctx) {
@@ -73,6 +86,48 @@ export function find(ctx) {
         }
         delete req.query.sort
         const result = await ctx.getMany(req.query, { sort })
+        return res.json(result)
+    }
+}
+
+export function rCreate(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.createOne(req.body)
+        return res.json(result)
+    }
+}
+
+export function rCreateMany(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.createMany(req.body)
+        return res.json(result)
+    }
+}
+
+export function rUpdate(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.updateOne(req.body.query, req.body.data)
+        return res.json(result)
+    }
+}
+
+export function rUpdateMany(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.updateMany(req.body.query, req.body.data)
+        return res.json(result)
+    }
+}
+
+export function rDelete(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.DeleteOne(req.body)
+        return res.json(result)
+    }
+}
+
+export function rDeleteMany(ctx) {
+    return async function (req, res, next) {
+        const result = await ctx.DeteleMany(req.body)
         return res.json(result)
     }
 }
