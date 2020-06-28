@@ -120,14 +120,14 @@ export function rUpdateMany(ctx) {
 
 export function rDelete(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.DeleteOne(req.body)
+        const result = await ctx.deleteOne(req.body)
         return res.json(result)
     }
 }
 
 export function rDeleteMany(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.DeteleMany(req.body)
+        const result = await ctx.deleteMany(req.body)
         return res.json(result)
     }
 }
