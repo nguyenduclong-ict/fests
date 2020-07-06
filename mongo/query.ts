@@ -171,7 +171,7 @@ export function getMany(model: Model<Document, {}>) {
                 task.sort(sort)
             }
             // populates
-            populates.forEach((field) => {
+            populates?.forEach((field) => {
                 task.populate(field)
             })
             const [l, count] = await Promise.all([
@@ -190,7 +190,7 @@ export function getMany(model: Model<Document, {}>) {
             // No pagination
             const task = model.find(condition)
             // populates
-            populates.forEach((field) => {
+            populates?.forEach((field) => {
                 task.populate(field)
             })
             // Sort
