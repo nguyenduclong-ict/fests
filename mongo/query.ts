@@ -63,7 +63,7 @@ export class Provider {
 export function list(ctx, target = 'query') {
     return async function (req, res, next) {
         const query = req[target]
-        let { sort, pagination } = query
+        let { sort, pagination, populates } = query
         if (typeof sort === 'string') {
             sort = JSON.parse(sort)
         }
@@ -78,7 +78,7 @@ export function list(ctx, target = 'query') {
         pagination = validatePagination(pagination)
         delete query.sort
         delete query.pagination
-        const result = await ctx.getMany(query, { pagination })
+        const result = await ctx.getMany(query, { pagination, sort, populates })
         return res.json(result)
     }
 }
