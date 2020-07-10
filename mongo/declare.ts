@@ -38,25 +38,11 @@ export declare type UpdateOneFunction = (condition, data, options?) => any
 
 export declare type DeleteManyFunction = (
     condition: any
-) => Query<
-    {
-        ok?: number
-        n?: number
-    } & {
-        deletedCount?: number
-    }
->
+) => Query<{ ok?: number; n?: number } & { deletedCount?: number }>
 
 export declare type DeleteOneFunction = (
     condition: any
-) => Query<
-    {
-        ok?: number
-        n?: number
-    } & {
-        deletedCount?: number
-    }
->
+) => Query<{ ok?: number; n?: number } & { deletedCount?: number }>
 
 export declare interface GetManyOptions {
     populates?: string[]

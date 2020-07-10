@@ -29,6 +29,8 @@ export class Provider {
 
         this.list = list(this)
         this.find = find(this)
+        this.findOne = findOne(this)
+        this.findOneBody = findOne(this, 'body')
         this.listBody = list(this, 'body')
         this.findBody = find(this, 'body')
         this.rCreate = rCreate(this)
@@ -50,6 +52,8 @@ export class Provider {
     // router
     list: (req, res, next) => void
     find: (req, res, next) => void
+    findOne: (req, res, next) => void
+    findOneBody: (req, res, next) => void
     listBody: (req, res, next) => void
     findBody: (req, res, next) => void
     rCreate: (req, res, next) => void
@@ -92,6 +96,14 @@ export function find(ctx, target = 'query') {
         }
         delete query.sort
         const result = await ctx.getMany(query, { sort })
+        return res.json(result)
+    }
+}
+
+export function findOne(ctx, target = 'query') {
+    return async function (req, res, next) {
+        const query = req[target]
+        const result = await ctx.getOne(query)
         return res.json(result)
     }
 }
