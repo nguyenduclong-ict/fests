@@ -82,6 +82,7 @@ export function list(ctx, target = 'query') {
         pagination = validatePagination(pagination)
         delete query.sort
         delete query.pagination
+        delete query.populates
         const result = await ctx.getMany(query, { pagination, sort, populates })
         return res.json(result)
     }
