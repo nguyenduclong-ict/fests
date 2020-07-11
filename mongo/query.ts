@@ -12,6 +12,7 @@ import {
     GetManyOptions,
 } from './declare'
 import { validatePagination } from '../query'
+import CustomError from '../error/custom-error'
 
 export class Provider {
     model: Model<Document, {}>
@@ -90,64 +91,96 @@ export function list(ctx, target = 'query') {
 
 export function find(ctx, target = 'query') {
     return async function (req, res, next) {
-        const query = req[target]
-        let { sort } = query
-        if (typeof sort === 'string') {
-            sort = JSON.parse(query.sort)
+        try {
+            const query = req[target]
+            let { sort } = query
+            if (typeof sort === 'string') {
+                sort = JSON.parse(query.sort)
+            }
+            delete query.sort
+            const result = await ctx.getMany(query, { sort })
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
         }
-        delete query.sort
-        const result = await ctx.getMany(query, { sort })
-        return res.json(result)
     }
 }
 
 export function findOne(ctx, target = 'query') {
     return async function (req, res, next) {
-        const query = req[target]
-        const result = await ctx.getOne(query)
-        return res.json(result)
+        try {
+            const query = req[target]
+            const result = await ctx.getOne(query)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rCreate(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.createOne(req.body)
-        return res.json(result)
+        try {
+            const result = await ctx.createOne(req.body)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rCreateMany(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.createMany(req.body)
-        return res.json(result)
+        try {
+            const result = await ctx.createMany(req.body)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rUpdate(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.updateOne(req.body.query, req.body.data)
-        return res.json(result)
+        try {
+            const result = await ctx.updateOne(req.body.query, req.body.data)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rUpdateMany(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.updateMany(req.body.query, req.body.data)
-        return res.json(result)
+        try {
+            const result = await ctx.updateMany(req.body.query, req.body.data)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rDelete(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.deleteOne(req.body)
-        return res.json(result)
+        try {
+            const result = await ctx.deleteOne(req.body)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
 export function rDeleteMany(ctx) {
     return async function (req, res, next) {
-        const result = await ctx.deleteMany(req.body)
-        return res.json(result)
+        try {
+            const result = await ctx.deleteMany(req.body)
+            return res.json(result)
+        } catch (error) {
+            next(new CustomError({ code: 500, message: error.message }))
+        }
     }
 }
 
