@@ -32,6 +32,12 @@ class {name}Provider extends Provider {}
 export default new {name}Provider({name});
 `.trim()
 
+const INDEX_FILE = `
+import {name} from './model';
+import {name}Provider from './provider';
+export { {name}, {name}Provider }
+`
+
 module.exports.generateMongoModel = function (path, ...args) {
     path = path.split('/')
     let name = path.pop()
@@ -57,6 +63,11 @@ module.exports.generateMongoModel = function (path, ...args) {
 
     fs.writeFileSync(
         modelPath + '/provider.ts',
+        PROVIDER_FILE.replace(/{name}/g, name)
+    )
+
+    fs.writeFileSync(
+        modelPath + '/index.ts',
         PROVIDER_FILE.replace(/{name}/g, name)
     )
 }
