@@ -68,6 +68,6 @@ module.exports.generateMongoModel = function (path, ...args) {
 
     fs.writeFileSync(
         modelPath + '/index.ts',
-        PROVIDER_FILE.replace(/{name}/g, name)
+        INDEX_FILE.replace(/{name}/g, name)
     )
 }
