@@ -35,6 +35,7 @@ export default new {name}Provider({name});
 const INDEX_FILE = `
 import {name} from './model';
 import {name}Provider from './provider';
+
 export { {name}, {name}Provider }
 `
 
