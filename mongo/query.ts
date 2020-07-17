@@ -75,6 +75,9 @@ export function list(ctx, target = 'query') {
         if (typeof pagination === 'string') {
             pagination = JSON.parse(pagination)
         }
+        if (typeof populates === 'string') {
+            populates = JSON.parse(populates)
+        }
         pagination = pagination || {
             page: 0,
             pageSize: 10,
@@ -93,12 +96,15 @@ export function find(ctx, target = 'query') {
     return async function (req, res, next) {
         try {
             const query = req[target]
-            let { sort } = query
+            let { sort, populates } = query
             if (typeof sort === 'string') {
                 sort = JSON.parse(query.sort)
             }
+            if (typeof populates === 'string') {
+                populates = JSON.parse(populates)
+            }
             delete query.sort
-            const result = await ctx.getMany(query, { sort })
+            const result = await ctx.getMany(query, { sort, populates })
             return res.json(result)
         } catch (error) {
             next(new CustomError({ code: 500, message: error.message }))
@@ -189,11 +195,14 @@ export function getOne(model: Model<Document, {}>): any {
     return (condition, populates: string[] = []) => {
         const task = model.findOne(condition)
         populates.forEach((pdata) => {
-            const path = pdata.split(':').shift()
-            const select = pdata.split(':').pop() || '*'
+            const [path, select, match, perDocumentLimit] = pdata
+                .split(':')
+                .shift()
             task.populate({
                 path,
                 select,
+                match,
+                perDocumentLimit,
             })
         })
         return task
@@ -223,11 +232,14 @@ export function getMany(model: Model<Document, {}>) {
             }
             // populates
             populates?.forEach((pdata) => {
-                const path = pdata.split(':').shift()
-                const select = pdata.split(':').pop() || '*'
+                const [path, select, match, perDocumentLimit] = pdata
+                    .split(':')
+                    .shift()
                 task.populate({
                     path,
                     select,
+                    match,
+                    perDocumentLimit,
                 })
             })
             const [l, count] = await Promise.all([
@@ -247,11 +259,14 @@ export function getMany(model: Model<Document, {}>) {
             const task = model.find(condition)
             // populates
             populates?.forEach((pdata) => {
-                const path = pdata.split(':').shift()
-                const select = pdata.split(':').pop() || '*'
+                const [path, select, match, perDocumentLimit] = pdata
+                    .split(':')
+                    .shift()
                 task.populate({
                     path,
                     select,
+                    match,
+                    perDocumentLimit,
                 })
             })
             // Sort
