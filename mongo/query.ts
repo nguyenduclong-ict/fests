@@ -185,13 +185,18 @@ export function rDeleteMany(ctx) {
 }
 
 // function ----------------------------------------------------
-export function getOne(model: Model<Document, {}>) {
+export function getOne(model: Model<Document, {}>): any {
     return (condition, populates: string[] = []) => {
         const task = model.findOne(condition)
-        populates.forEach((field) => {
-            task.populate(field)
+        populates.forEach((pdata) => {
+            const path = pdata.split(':').shift()
+            const select = pdata.split(':').pop() || '*'
+            task.populate({
+                path,
+                select,
+            })
         })
-        return task.lean().exec()
+        return task
     }
 }
 
@@ -217,11 +222,16 @@ export function getMany(model: Model<Document, {}>) {
                 task.sort(sort)
             }
             // populates
-            populates?.forEach((field) => {
-                task.populate(field)
+            populates?.forEach((pdata) => {
+                const path = pdata.split(':').shift()
+                const select = pdata.split(':').pop() || '*'
+                task.populate({
+                    path,
+                    select,
+                })
             })
             const [l, count] = await Promise.all([
-                task.lean().exec(),
+                task,
                 model.countDocuments(condition),
             ])
             // pager
@@ -236,14 +246,19 @@ export function getMany(model: Model<Document, {}>) {
             // No pagination
             const task = model.find(condition)
             // populates
-            populates?.forEach((field) => {
-                task.populate(field)
+            populates?.forEach((pdata) => {
+                const path = pdata.split(':').shift()
+                const select = pdata.split(':').pop() || '*'
+                task.populate({
+                    path,
+                    select,
+                })
             })
             // Sort
             if (sort) {
                 task.sort(sort)
             }
-            return task.lean().exec()
+            return task
         }
     }
 }
