@@ -5,7 +5,7 @@ import fs from 'fs'
  *
  * @param path path to file directory
  */
-export default function importAll(path) {
+export default function importAll(path, regex: RegExp = /.*/) {
     const modules: {
         ext: string
         path: string
@@ -13,9 +13,9 @@ export default function importAll(path) {
         originName: string
         module: any
     }[] = []
-    const stats = fs.statSync(path)
 
-    if (stats.isFile()) {
+    const stats = fs.statSync(path)
+    if (stats.isFile() && regex.test(Path.basename(path))) {
         const ext = Path.extname(path)
         modules.push({
             ext,
@@ -28,7 +28,7 @@ export default function importAll(path) {
 
     if (stats.isDirectory()) {
         fs.readdirSync(path).forEach((f) => {
-            modules.push(...importAll(Path.join(path, f)))
+            modules.push(...importAll(Path.join(path, f), regex))
         })
     }
 
