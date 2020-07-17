@@ -232,9 +232,8 @@ export function getMany(model: Model<Document, {}>) {
             }
             // populates
             populates?.forEach((pdata) => {
-                const [path, select, match, perDocumentLimit] = pdata
-                    .split(':')
-                    .shift()
+                const [path, select, match, perDocumentLimit] = pdata.split(':')
+                console.log(path, select, match, perDocumentLimit)
                 task.populate({
                     path,
                     select,
@@ -259,9 +258,7 @@ export function getMany(model: Model<Document, {}>) {
             const task = model.find(condition)
             // populates
             populates?.forEach((pdata) => {
-                const [path, select, match, perDocumentLimit] = pdata
-                    .split(':')
-                    .shift()
+                const [path, select, match, perDocumentLimit] = pdata.split(':')
                 task.populate({
                     path,
                     select,
